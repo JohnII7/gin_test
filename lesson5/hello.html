@@ -5,6 +5,16 @@
     <title>Title</title>
 </head>
 <body>
-  <p>hello, {{ . }}</p>
+<p>hello, {{ .u1.Name }}</p>
+<p>{{ .u1.Name }}的年龄是{{ .u1.Age }}岁</p>
+<p>性别: {{ .u1.Gender }}</p>
+
+<p>hello, {{ .m1.Name }}</p>
+<hr/>
+{{ $v1 := 100}}
+{{ $age := .m1.age }}
+{{ if $v1 }}
+{{ $v1 }}
+{{end}}
 </body>
 </html>
