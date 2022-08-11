@@ -5,41 +5,38 @@ import (
 	"net/http"
 )
 
-func sayHello(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "Hello, Gin",
-	})
-}
-
 func main() {
-	// 返回默认的路由引擎
 	r := gin.Default()
+	r.GET("/json", func(c *gin.Context) {
+		// 方法一 map
+		//data := map[string]interface{}{
+		//	"name":    "小王子",
+		//	"message": "hello world",
+		//	"age":     24,
+		//}
 
-	// 指定Get请求, 执行sayHello函数
-	r.GET("/hello", sayHello)
+		data := gin.H{
+			"name":    "小王子",
+			"message": "hello world",
+			"age":     24,
+		}
+		c.JSON(http.StatusOK, data)
+	})
+	// 方法二 struct
+	type msg struct {
+		Name    string `json:"name"`
+		Age     int
+		Message string
+	}
 
-	// rest
-	r.GET("/book", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"method": "GET",
-		})
-	})
-	r.PUT("/book", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"method": "PUT",
-		})
-	})
-	r.POST("/book", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"method": "POST",
-		})
-	})
-	r.DELETE("/book", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"method": "DELETE",
-		})
+	r.GET("/anotherJson", func(context *gin.Context) {
+		data := msg{
+			Name:    "大王子",
+			Age:     19,
+			Message: "HelloWorld",
+		}
+		context.JSON(http.StatusOK, data)
 	})
 
-	// 启动服务
 	r.Run(":9090")
 }
