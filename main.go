@@ -8,13 +8,23 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.GET("/web", func(c *gin.Context) {
-		// 获取请求携带的queryString参数
-		name := c.Query("query")
-		c.JSON(http.StatusOK, gin.H{
-			"name": name,
-		})
+	r.LoadHTMLFiles("./login.html", "./index.html")
+	r.GET("/login", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "login.html", nil)
 	})
+
+	r.POST("/login", func(c *gin.Context) {
+		username := c.PostForm("username")
+		password := c.PostForm("password")
+		if username == "John" && password == "123" {
+			c.HTML(http.StatusOK, "index.html", gin.H{
+				"Name":     username,
+				"Password": password,
+			})
+		}
+
+	})
+
 	err := r.Run(":9090")
 	if err != nil {
 		fmt.Println("err:", err)
