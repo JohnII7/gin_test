@@ -1,42 +1,22 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 func main() {
 	r := gin.Default()
-	r.GET("/json", func(c *gin.Context) {
-		// 方法一 map
-		//data := map[string]interface{}{
-		//	"name":    "小王子",
-		//	"message": "hello world",
-		//	"age":     24,
-		//}
-
-		data := gin.H{
-			"name":    "小王子",
-			"message": "hello world",
-			"age":     24,
-		}
-		c.JSON(http.StatusOK, data)
+	r.GET("/web", func(c *gin.Context) {
+		// 获取请求携带的queryString参数
+		name := c.Query("query")
+		c.JSON(http.StatusOK, gin.H{
+			"name": name,
+		})
 	})
-	// 方法二 struct
-	type msg struct {
-		Name    string `json:"name"`
-		Age     int
-		Message string
+	err := r.Run(":9090")
+	if err != nil {
+		fmt.Println("err:", err)
 	}
-
-	r.GET("/anotherJson", func(context *gin.Context) {
-		data := msg{
-			Name:    "大王子",
-			Age:     19,
-			Message: "HelloWorld",
-		}
-		context.JSON(http.StatusOK, data)
-	})
-
-	r.Run(":9090")
 }
