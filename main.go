@@ -8,21 +8,21 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.LoadHTMLFiles("./login.html", "./index.html")
-	r.GET("/login", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "login.html", nil)
+	r.GET("/:name/:age", func(c *gin.Context) {
+		name := c.Param("name")
+		age := c.Param("age")
+		c.JSON(http.StatusOK, gin.H{
+			"name": name,
+			"age":  age,
+		})
 	})
-
-	r.POST("/login", func(c *gin.Context) {
-		username := c.PostForm("username")
-		password := c.PostForm("password")
-		if username == "John" && password == "123" {
-			c.HTML(http.StatusOK, "index.html", gin.H{
-				"Name":     username,
-				"Password": password,
-			})
-		}
-
+	r.GET("/blog/:year/:month", func(c *gin.Context) {
+		year := c.Param("year")
+		month := c.Param("month")
+		c.JSON(http.StatusOK, gin.H{
+			"year":  year,
+			"month": month,
+		})
 	})
 
 	err := r.Run(":9090")
