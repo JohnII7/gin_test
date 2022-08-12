@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
@@ -13,43 +14,25 @@ type UserInfo struct {
 
 func main() {
 	r := gin.Default()
-	r.GET("/user", func(c *gin.Context) {
-		//username := c.Query("username")
-		//password := c.Query("password")
-		//u := UserInfo{
-		//	username: username,
-		//	password: password,
-		//}
-		var u UserInfo
-		err := c.ShouldBind(&u)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-		} else {
-			// %#v先打印结构体名字，再打印结构体
-			fmt.Printf("%#v\n", u)
-			c.JSON(http.StatusOK, gin.H{
-				"status": "ok",
-			})
-		}
+	r.LoadHTMLFiles("./index.html")
+	r.GET("/index", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", nil)
 	})
 
-	r.POST("/form", func(c *gin.Context) {
-		var u UserInfo
-		err := c.ShouldBind(&u)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-		} else {
-			// %#v先打印结构体名字，再打印结构体
-			fmt.Printf("%#v\n", u)
-			c.JSON(http.StatusOK, gin.H{
-				"status": "ok",
-			})
+	r.POST("/upload", func(c *gin.Context) {
+		// 请求中读取单文件
+		form, _ := c.MultipartForm()
+		files := form.File["f1"]
+		for i, file := range files {
+			log.Println(file.Filename)
+			dst := fmt.Sprintf("./%s_%d", file.Filename, i)
+			c.SaveUploadedFile(file, dst)
 		}
+		c.JSON(http.StatusOK, gin.H{
+			"message": fmt.Sprintf("%d files uploaded!", len(files)),
+		})
 	})
+
 	err := r.Run(":9090")
 	if err != nil {
 		fmt.Println("err:", err)
